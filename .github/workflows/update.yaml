@@ -1,0 +1,88 @@
+name: Update
+
+on:
+  schedule:
+    - cron: "10 */2 * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  update_siennas:
+    name: "Update"
+    runs-on: ubuntu-latest
+    env:
+      MODEL: sienna
+      ZIPCODE: ${{ vars.ZIPCODE }}
+      DISTANCE: ${{ vars.DISTANCE }}
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+
+      - name: Ensure we have the latest repository data
+        run: git pull --rebase
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: poetry
+
+      - name: Cache playwright browsers
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright
+
+      - name: Install dependencies
+        run: poetry install --only main
+
+      - name: Install playwright browsers
+        run: poetry run playwright install firefox
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+
+      - name: Get vehicles matching model
+        run: poetry run update_vehicles
+        env:
+          PYTHONUNBUFFERED: 1
+
+      - name: Store image data in artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: "output"
+          path: "output/${{ env.MODEL }}*"
+
+  commit_changes:
+    name: "Commit changes"
+    runs-on: ubuntu-latest
+    needs: [update_siennas]
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+
+      - name: Download image data artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Commit and push if it changed
+        run: |-
+          git config user.name "GH Action"
+          git config user.email "gha-bot@github.com"
+          git add output
+          timestamp=$(date -u)
+          git commit -m "Updating siennas data: ${timestamp}" || exit 0
+          git clean -fxd
+          git status
+          git pull --rebase
+          git push

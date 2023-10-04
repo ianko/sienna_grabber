@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "sienna_grabber"
+version = "0.1.0"
+description = ""
+authors = ["Ianko Leite"]
+readme = "README.md"
+packages = [{ include = "sienna_grabber", from = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.11.5,<3.13"
+pandas = "^2.1.1"
+pyarrow = "^13.0.0"
+requests = "^2.31.0"
+playwright = "^1.38.0"
+brotli = "^1.1.0"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.5.1"
+ipython = "^8.16.0"
+pytest-sugar = "^0.9.7"
+pytest = "^7.4.2"
+pytest-xdist = "^3.3.1"
+pytest-cov = "^4.1.0"
+pandas-stubs = "^2.0.3.230814"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+update_vehicles = 'sienna_grabber.vehicles:update_vehicles'
+upload_output = 'sienna_grabber.vehicles:upload_output'

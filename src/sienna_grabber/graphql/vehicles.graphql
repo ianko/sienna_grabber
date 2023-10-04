@@ -1,0 +1,82 @@
+query {
+  locateVehiclesByZip(
+    zipCode: "ZIPCODE"
+    brand: "TOYOTA"
+    pageNo: PAGENUMBER
+    pageSize: 250
+    seriesCodes: "MODELCODE"
+    distance: DISTANCEMILES
+    leadid: "LEADIDUUID"
+  ) {
+    pagination {
+      pageNo
+      pageSize
+      totalPages
+      totalRecords
+    }
+    vehicleSummary {
+      vin
+      stockNum
+      marketingSeries
+      year
+      isTempVin
+      dealerCd
+      dealerCategory
+      distributorCd
+      holdStatus
+      isPreSold
+      dealerMarketingName
+      dealerWebsite
+      isSmartPath
+      distance
+      price {
+        advertizedPrice
+        nonSpAdvertizedPrice
+        totalMsrp
+        sellingPrice
+        dph
+        dioTotalMsrp
+        dioTotalDealerSellingPrice
+        dealerCashApplied
+        baseMsrp
+      }
+      options {
+        optionCd
+        marketingName
+        optionType
+      }
+      model {
+        modelCd
+        marketingName
+        marketingTitle
+      }
+      media {
+        type
+        href
+        size
+        imageTag
+        source
+      }
+      intColor {
+        colorCd
+        colorSwatch
+        marketingName
+        colorFamilies
+      }
+      extColor {
+        colorCd
+        colorSwatch
+        marketingName
+        colorHexCd
+        colorFamilies
+      }
+      eta {
+        currFromDate
+        currToDate
+      }
+      drivetrain {
+        code
+      }
+    }
+  }
+}
