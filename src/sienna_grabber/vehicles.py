@@ -182,7 +182,7 @@ def to_csv_simple(df):
         "holdStatus": "Hold Status",
         "isPreSold": "Pre-Sold",
         "dealerCategory": "Shipping Status",
-        "price.baseMsrp": "Base MSRP",
+        "price.totalMsrp": "Total MSRP",
         "extColor.marketingName": "Exterior Color",
         "intColor.marketingName": "Interior Color",
         "distance": "Distance",
@@ -202,8 +202,7 @@ def to_csv_simple(df):
                 "holdStatus",
                 "isPreSold",
                 "dealerCategory",
-                "price.baseMsrp",
-                "price.dioTotalDealerSellingPrice",
+                "price.totalMsrp",
                 "extColor.marketingName",
                 "intColor.marketingName",
                 "distance",
@@ -216,12 +215,6 @@ def to_csv_simple(df):
         .copy(deep=True)
         .rename(columns=renames)
     )
-
-    # Calculate the dealer price + markup.
-    df["Dealer Price"] = df["Base MSRP"] + df["price.dioTotalDealerSellingPrice"]
-    df["Dealer Price"] = df["Dealer Price"].fillna(df["Base MSRP"])
-    df["Markup"] = df["Dealer Price"] - df["Base MSRP"]
-    df.drop(columns=["price.dioTotalDealerSellingPrice"], inplace=True)
 
     statuses = {None: False, 1: True, 0: False}
     df.replace({"Pre-Sold": statuses}, inplace=True)
@@ -245,7 +238,7 @@ def to_csv_simple(df):
             "Hold Status",
             "Pre-Sold",
             "Shipping Status",
-            "Base MSRP",
+            "Total MSRP",
             "Exterior Color",
             "Interior Color",
             "Distance",
