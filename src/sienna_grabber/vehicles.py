@@ -175,7 +175,7 @@ def to_json_raw(df):
 
 def to_csv_simple(df):
     renames = {
-        "eta.currFromDate": "ETA",
+        "eta.currToDate": "ETA",
         "vin": "VIN",
         "year": "Year",
         "model.marketingName": "Model",
@@ -195,7 +195,7 @@ def to_csv_simple(df):
     df = (
         df[
             [
-                "eta.currFromDate",
+                "eta.currToDate",
                 "vin",
                 "year",
                 "model.marketingName",
