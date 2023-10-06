@@ -250,7 +250,7 @@ def to_csv_simple(df):
     ]
 
     # Write the data to a file.
-    df.sort_values(by=["ETA"], inplace=True)
+    df.sort_values(by=["VIN"], inplace=True)
     df.to_csv(f"output/{MODEL}.csv", index=False)
 
 def format_options(options_raw):
