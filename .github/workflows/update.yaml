@@ -33,13 +33,13 @@ jobs:
         run: pipx install poetry
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: poetry
 
       - name: Cache playwright browsers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: playwright-cache
         with:
           path: |
@@ -59,7 +59,7 @@ jobs:
           PYTHONUNBUFFERED: 1
 
       - name: Store image data in artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "output"
           path: "output/${{ env.MODEL }}*"
@@ -73,7 +73,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download image data artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Commit and push if it changed
         run: |-
