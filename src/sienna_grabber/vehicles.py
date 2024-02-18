@@ -9,6 +9,7 @@ from timeit import default_timer as timer
 
 import pandas as pd
 import requests
+import warnings
 
 from sienna_grabber import config, wafbypass
 
@@ -107,7 +108,10 @@ def get_all_pages():
 
         result = query_toyota(page_number, query, headers)
         if result and "vehicleSummary" in result:
-            df = pd.concat([df, pd.json_normalize(result["vehicleSummary"])])
+            with warnings.catch_warnings():
+                # TODO: pandas 2.1.0 has a FutureWarning for concatenating DataFrames with Null entries
+                warnings.filterwarnings("ignore", category=FutureWarning)
+                df = pd.concat([df, pd.json_normalize(result["vehicleSummary"])])
 
         # Drop any duplicate VINs.
         df.drop_duplicates(subset=["vin"], inplace=True)
@@ -226,7 +230,12 @@ def to_csv_simple(df):
     }
     df.replace({"Shipping Status": statuses}, inplace=True)
 
-    df["ETA"] = df["ETA"].apply(lambda dt: dt.split("T")[0])
+    # when ETA is null, set as unknown, otherwise format as date
+    if df["ETA"].isnull().any():
+        df["ETA"].fillna("Unknown", inplace=True)
+    else:
+        df["ETA"] = df["ETA"].apply(lambda dt: dt.split("T")[0])
+
     df["Options"] = df["Options"].apply(format_options)
 
     df = df[
